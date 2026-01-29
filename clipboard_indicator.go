@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/md5"
 	"flag"
 	"fmt"
 	"os/exec"
@@ -10,11 +9,12 @@ import (
 )
 
 var (
-	interval   = flag.Duration("interval", 500*time.Millisecond, "Polling interval")
-	notifyTime = flag.Duration("timeout", 1500*time.Millisecond, "Notification timeout")
-	urgency    = flag.String("urgency", "low", "Notification urgency (low, normal, critical)")
-	maxLen     = flag.Int("max-preview", 50, "Max preview length in notification")
-	icon       = flag.String("icon", "", "Notification icon")
+	interval    = flag.Duration("interval", 500*time.Millisecond, "Polling interval")
+	notifyTime  = flag.Duration("timeout", 1500*time.Millisecond, "Notification timeout")
+	minInterval = flag.Duration("min-interval", 1*time.Second, "Minimum time between notifications")
+	urgency     = flag.String("urgency", "low", "Notification urgency (low, normal, critical)")
+	maxLen      = flag.Int("max-preview", 50, "Max preview length in notification")
+	icon        = flag.String("icon", "", "Notification icon")
 )
 
 func getClipboard() (string, error) {
@@ -49,15 +49,15 @@ func notify(content, typ string) {
 func main() {
 	flag.Parse()
 	fmt.Println("Clipboard indicator started. Monitoring clipboard...")
-	var lastHash [16]byte
+	var lastNotify time.Time
 
 	for {
 		content, err := getClipboard()
 		if err == nil && content != "" {
-			currentHash := md5.Sum([]byte(content))
-			if currentHash != lastHash {
+			// Only notify if enough time has passed since last notification
+			if time.Since(lastNotify) >= *minInterval {
 				notify(content, "✓ Copied")
-				lastHash = currentHash
+				lastNotify = time.Now()
 			}
 		}
 		time.Sleep(*interval)
