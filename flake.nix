@@ -60,7 +60,12 @@
     };
 
     # Home Manager module
-    homeManagerModules.default = import ./home-manager.nix;
+    homeManagerModules.default = { config, lib, pkgs, ... }: {
+      imports = [ ./home-manager.nix ];
+      config = lib.mkIf config.programs.its-clipped.enable {
+        programs.its-clipped.package = lib.mkDefault self.packages.x86_64-linux.default;
+      };
+    };
     
     # NixOS system module
     nixosModules.default = import ./nixos-module.nix;

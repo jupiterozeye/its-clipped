@@ -7,7 +7,6 @@ in {
     enable = lib.mkEnableOption "its-clipped clipboard indicator";
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.its-clipped or (pkgs.callPackage ./flake.nix {});
       description = "The its-clipped package to use";
     };
     settings = lib.mkOption {
