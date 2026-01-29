@@ -49,15 +49,21 @@ func notify(content, typ string) {
 func main() {
 	flag.Parse()
 	fmt.Println("Clipboard indicator started. Monitoring clipboard...")
+	var lastContent string
 	var lastNotify time.Time
 
 	for {
 		content, err := getClipboard()
 		if err == nil && content != "" {
-			// Only notify if enough time has passed since last notification
-			if time.Since(lastNotify) >= *minInterval {
-				notify(content, "✓ Copied")
-				lastNotify = time.Now()
+			// Only notify when clipboard content changes
+			if content != lastContent {
+				// Rate limit: only notify if enough time passed since last notification
+				if time.Since(lastNotify) >= *minInterval {
+					notify(content, "✓ Copied")
+					lastNotify = time.Now()
+				}
+				// Always update lastContent so we don't keep checking the same content
+				lastContent = content
 			}
 		}
 		time.Sleep(*interval)
