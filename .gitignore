@@ -1,0 +1,17 @@
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Nix
+result
+result-*
+
+# Editor
+.idea/
+.vscode/
+*.swp
