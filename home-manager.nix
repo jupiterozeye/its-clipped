@@ -28,7 +28,7 @@ in {
     systemd.user.services.its-clipped = {
       Unit = {
         Description = "Subtle clipboard change indicator";
-        After = ["graphical-session-pre.target"];
+        After = ["graphical-session.target"];
         PartOf = ["graphical-session.target"];
       };
       Service = {
@@ -36,7 +36,10 @@ in {
           lib.concatStringsSep " " (lib.mapAttrsToList (k: v: "-${k}=${toString v}") cfg.settings)
         }";
         Restart = "on-failure";
-        Environment = "PATH=${lib.makeBinPath [pkgs.wl-clipboard pkgs.xclip pkgs.libnotify]}";
+        Environment = [
+          "PATH=${lib.makeBinPath [pkgs.wl-clipboard pkgs.xclip pkgs.libnotify]}"
+          "DBUS_SESSION_BUS_ADDRESS=%t/bus"
+        ];
       };
       Install = {
         WantedBy = ["graphical-session.target"];
