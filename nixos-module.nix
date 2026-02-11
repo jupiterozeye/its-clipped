@@ -8,8 +8,7 @@ in {
     
     package = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.its-clipped;
-      description = "The its-clipped package to use";
+      description = "The its-clipped package to use (required)";
     };
     
     users = lib.mkOption {

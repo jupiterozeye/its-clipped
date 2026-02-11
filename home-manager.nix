@@ -33,7 +33,7 @@ in {
       };
       Service = {
         ExecStart = "${cfg.package}/bin/its-clipped ${
-          lib.concatStringsSep " " (lib.mapAttrsToList (k: v: "-${k}=${toString v}") cfg.settings)
+          lib.concatStringsSep " " (lib.mapAttrsToList (k: v: "-${lib.toKebabCase k}=${toString v}") cfg.settings)
         }";
         Restart = "on-failure";
       };

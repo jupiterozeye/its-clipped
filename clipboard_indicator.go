@@ -36,14 +36,14 @@ func notify(content, typ string) {
 	}
 	preview = strings.ReplaceAll(preview, "\n", " ")
 
-	args := []string{"-t", fmt.Sprintf("%d", notifyTime.Milliseconds()), "-u", *urgency}
+	args := []string{"-t", fmt.Sprintf("%d", (*notifyTime).Milliseconds()), "-u", *urgency}
 	if *icon != "" {
 		args = append(args, "-i", *icon)
 	}
 	args = append(args, typ, preview)
 
 	cmd := exec.Command("notify-send", args...)
-	cmd.Run()
+	_ = cmd.Run()
 }
 
 func main() {
